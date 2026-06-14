@@ -3,12 +3,13 @@ import json
 from API_TOKEN import API_KEY
 class GetCats:
     json_data=[]
-    _url='https://cataas.com/'
+    _url_cats='https://cataas.com/'
+    _yandex_url='https://cloud-api.yandex.net/v1/disk/'
     def __init__(self,text,api_key):
         self.text=text
         self.api_key=api_key
     def _build_url(self,api_method):
-        return f'{self._url}{api_method}'
+        return f'{self._url_cats}{api_method}'
     def getcat(self):
         params={'json':'true'}
         response=requests.get(self._build_url('cat/says/'+self.text),params=params)
@@ -17,10 +18,9 @@ class GetCats:
         print('фото кота получено')
         return data.get('url')
     def _new_folder(self,group):
-        url='https://cloud-api.yandex.net/v1/disk/resources'
         params={'path':group}
         headers = {'Authorization': f'OAuth {self.api_key}'}
-        response= requests.put(url,params=params,headers=headers)
+        response= requests.put(f'{self._yandex_url}resources',params=params,headers=headers)
         data = response.json()
         print('папка создана')
         return data.get('href')
@@ -31,8 +31,7 @@ class GetCats:
         self._new_folder(group)
         params={'url':cat_url,'path':f'{group}/cat_{self.text}.jpg' }
         headers={'Authorization': f'OAuth {self.api_key}'}
-        url='https://cloud-api.yandex.net/v1/disk/resources/upload'
-        response=requests.post(url,params=params,headers=headers)
+        response=requests.post(f'{self._yandex_url}resources/upload',params=params,headers=headers)
         response.raise_for_status()
         data=response.json()
         self.json_data.append({'name': f'cat_{self.text}', 'text': self.text})
@@ -49,6 +48,4 @@ class GetCats:
 
 cat=GetCats('bay',API_KEY)
 res=cat.import_disc()
-# res=cat.getcat()
-# res=cat._new_folder('PY-254')
 print(res)
