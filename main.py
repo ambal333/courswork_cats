@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from API_TOKEN import API_KEY
+# from API_TOKEN import API_KEY
 class GetCats:
     json_data=[]
     _url_cats='https://cataas.com/'
@@ -48,12 +48,13 @@ class GetCats:
 
     def _json_file_append_info(self,new_info):
         self.json_data.append(new_info)
+        os.makedirs('info_cats', exist_ok=True)
         with open('info_cats/backup_report.json','w',encoding='utf-8') as f:
             json.dump(self.json_data,f,ensure_ascii=False,indent=2)
             f.flush()
             json_str=json.dumps(self.json_data,ensure_ascii=False,indent=2)
             print(json_str)
 
-cat=GetCats('bay',API_KEY)
+cat=GetCats('hello',API_KEY)
 res=cat.import_disc()
 print(res)
