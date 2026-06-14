@@ -48,6 +48,7 @@ class GetCats:
 
     def _json_file_append_info(self,new_info):
         self.json_data.append(new_info)
+        os.makedirs('info_cats', exist_ok=True)
         with open('info_cats/backup_report.json','w',encoding='utf-8') as f:
             json.dump(self.json_data,f,ensure_ascii=False,indent=2)
             f.flush()
