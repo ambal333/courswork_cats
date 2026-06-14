@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from API_TOKEN import API_KEY
 class GetCats:
     json_data=[]
@@ -34,17 +35,24 @@ class GetCats:
         response=requests.post(f'{self._yandex_url}resources/upload',params=params,headers=headers)
         response.raise_for_status()
         data=response.json()
-        self.json_data.append({'name': f'cat_{self.text}', 'text': self.text})
-        self._json_file_append_info()
+        info_photo={'name': f'cat_{self.text}', 'text': self.text,'link':cat_url}
+        self._load_existing_report()
+        self._json_file_append_info(info_photo)
         return 'фото добавлены'
+    def _load_existing_report(self):
+        if os.path.exists('info_cats/backup_report.json'):
+            with open('info_cats/backup_report.json',encoding='utf-8') as f:
+                self.json_data=json.load(f)
+        else:
+            self.json_data = []
 
-    def _json_file_append_info(self):
+    def _json_file_append_info(self,new_info):
+        self.json_data.append(new_info)
         with open('info_cats/backup_report.json','w',encoding='utf-8') as f:
             json.dump(self.json_data,f,ensure_ascii=False,indent=2)
-        with open('info_cats/backup_report.json',encoding='utf-8') as f:
-            data=json.load(f)
-            print(data)
-
+            f.flush()
+            json_str=json.dumps(self.json_data,ensure_ascii=False,indent=2)
+            print(json_str)
 
 cat=GetCats('bay',API_KEY)
 res=cat.import_disc()
