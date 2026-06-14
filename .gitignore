@@ -1,2 +1,4 @@
-API_TOKEN.py/
+API_TOKEN.py
 .idea/
+__pycache__
+info_cats/
